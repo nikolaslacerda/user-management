@@ -34,7 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public SecurityConfig(JwtAuthorizationFilter jwtAuthorizationFilter,
                           JwtAccessDeniedHandler jwtAccessDeniedHandler,
                           JwtAuthorizationEntryPoint jwtAuthorizationEntryPoint,
-                          @Qualifier("userDetailsService")UserDetailsService userDetailsService,
+                          @Qualifier("userDetailsService") UserDetailsService userDetailsService,
                           BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.jwtAuthorizationFilter = jwtAuthorizationFilter;
         this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
@@ -51,6 +51,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        http.headers().frameOptions().disable();
+
         http.csrf().disable()
                 .cors().and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
