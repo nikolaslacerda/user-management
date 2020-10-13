@@ -23,6 +23,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @Service
 @Transactional
@@ -37,10 +38,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    private LoginAttemptService loginAttemptService;
+
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, LoginAttemptService loginAttemptService) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.loginAttemptService = loginAttemptService;
     }
 
     @Override
@@ -50,12 +54,25 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             LOGGER.error("User not found by username: " + username);
             throw new UsernameNotFoundException("User not found by username: " + username);
         } else {
+            validateLoginAttempt(user);
             user.setLastLoginDateDisplay(user.getLastLoginDate());
             user.setLastLoginDate(new Date());
             userRepository.save(user); // Update User
             UserPrincipal userPrincipal = new UserPrincipal(user);
             LOGGER.info("Returning found user by username: " + username);
             return userPrincipal;
+        }
+    }
+
+    private void validateLoginAttempt(User user) {
+        if(user.isNotLocked()) {
+            if(loginAttemptService.hasExceededMaxAttempts(user.getUsername())){
+                user.setNotLocked(false);
+            }else{
+                user.setNotLocked(true);
+            }
+        }else{
+            loginAttemptService.evictUserFromLoginAttemptCache(user.getUsername());
         }
     }
 
