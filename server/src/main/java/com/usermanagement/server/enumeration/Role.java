@@ -1,13 +1,13 @@
 package com.usermanagement.server.enumeration;
 
-import com.usermanagement.server.constant.Authority;
+import com.usermanagement.server.constant.AuthorityConstant;
 
 public enum Role {
-    ROLE_USER(Authority.USER_AUTHORITIES),
-    ROLE_HR(Authority.HR_AUTHORITIES),
-    ROLE_MANAGER(Authority.MANAGER_AUTHORITIES),
-    ROLE_ADMIN(Authority.ADMIN_AUTHORITIES),
-    ROLE_SUPER_ADMIN(Authority.SUPER_ADMIN_AUTHORITIES);
+    ROLE_USER(AuthorityConstant.USER_AUTHORITIES),
+    ROLE_HR(AuthorityConstant.HR_AUTHORITIES),
+    ROLE_MANAGER(AuthorityConstant.MANAGER_AUTHORITIES),
+    ROLE_ADMIN(AuthorityConstant.ADMIN_AUTHORITIES),
+    ROLE_SUPER_ADMIN(AuthorityConstant.SUPER_ADMIN_AUTHORITIES);
 
     private String[] authorities;
 
